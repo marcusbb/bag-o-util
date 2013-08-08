@@ -42,6 +42,7 @@ public class LogContextFilter implements Filter {
 
 	private boolean checkSession = true;
 	private boolean checkHeader = true;
+	protected boolean alwaysInitialize = true;
 	
 	public final static String HTTP_HEADER_PREFIX = "PRV_CTX_";
 	public final static String SESSION_PREFIX = PropagationContext.PREFIX;
@@ -55,6 +56,7 @@ public class LogContextFilter implements Filter {
 	public void init(FilterConfig filterConfig) throws ServletException {
 		checkSession = isEnabled(filterConfig, "checkSession");
 		checkHeader = isEnabled(filterConfig, "checkHeader");
+		alwaysInitialize = isEnabled(filterConfig,"alwaysInitialize");
 	}
 	
 	private boolean isEnabled(FilterConfig filterConfig,String parameter) {
@@ -77,32 +79,37 @@ public class LogContextFilter implements Filter {
 		HttpServletRequest httpReq = (HttpServletRequest)request;
 		HttpSession session = httpReq.getSession(false);
 		
-		PropagationContext logCtx = PropagationContextFactory.get();
-		
-		//check initialization
-		if (!logCtx.isInitialized()) {
-			
-			logCtx.init(true,ContextPropagationMode.ALL);
-			
-		}
-		
-		//first check session information
-		if (checkSession)
-			populateFromSession(session,logCtx);
-		//mark the IP
-		String IP = request.getRemoteAddr();
-		logCtx.setStringCtx(PropagationContext.IP_KEY, IP);
-		//the request header information over-rides anything in session
-		//although there should be no intersection
-		if (checkHeader)
-			populateFromRequestHeaders(httpReq,logCtx);
+		PropagationContext logCtx = null;
 				
 		try {
-		
+			logCtx = PropagationContextFactory.get();
+			
+			//check initialization
+			if (alwaysInitialize) {
+				logCtx.init(true,ContextPropagationMode.ALL);
+			}else if (!logCtx.isInitialized()) {
+				
+				logCtx.init(true,ContextPropagationMode.ALL);
+				
+			}
+			
+			//first check session information
+			if (checkSession)
+				populateFromSession(session,logCtx);
+			//mark the IP
+			String IP = request.getRemoteAddr();
+			logCtx.setStringCtx(PropagationContext.IP_KEY, IP);
+			//the request header information over-rides anything in session
+			//although there should be no intersection
+			if (checkHeader)
+				populateFromRequestHeaders(httpReq,logCtx);
+					
+				
 			chain.doFilter(request, response);
 		}finally {
 			//Unset the context information
-			logCtx.unSetContext();
+			if (logCtx !=null) 
+				logCtx.unSetContext();
 		}
 		
 	}

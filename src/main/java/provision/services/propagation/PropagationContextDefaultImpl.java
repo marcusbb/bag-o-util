@@ -26,7 +26,7 @@ public class PropagationContextDefaultImpl implements PropagationContext {
 
 	private static String localNodeId = "UNKNOWN_HOST";
 	private IDGenerator idGenerator = null;
-	
+	private static int DEF_CAPACITY = 4;
 	protected PropagationContextDefaultImpl() {
 		idGenerator = new UIDTypeIDImpl();
 	}
@@ -41,7 +41,7 @@ public class PropagationContextDefaultImpl implements PropagationContext {
 		@Override
 		protected Map<String, String> initialValue() {
 			//A bucket of 4 
-			HashMap<String,String> map = new HashMap<String, String>(4);
+			HashMap<String,String> map = new HashMap<String, String>(DEF_CAPACITY);
 			return map;
 		}
 		
@@ -169,7 +169,7 @@ public class PropagationContextDefaultImpl implements PropagationContext {
 	}
 
 	public void unSetContext() {
-		tLocalMap.set(new HashMap<String, String>());
+		tLocalMap.set(new HashMap<String, String>(DEF_CAPACITY));
 
 	}
 

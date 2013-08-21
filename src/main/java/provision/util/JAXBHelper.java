@@ -8,8 +8,13 @@
  */
 package provision.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBException;
@@ -36,6 +41,36 @@ import com.sun.jersey.api.json.JSONUnmarshaller;
 public class JAXBHelper{
 	
 	private final static String CALLER = JAXBHelper.class.getSimpleName();
+	public <T> T unmarshalValidate(JSONJAXBContext context, String mediaType, InputStream in, Class<T> expectedClass) throws JAXBException, SAXException{
+		/*
+		 * read payload to string
+		 */
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(512);
+		byte[] buff = new byte[512]; 
+		int len = 0;
+		try {
+			while((len=in.read(buff))>-1){
+			    bos.write(buff, 0, len);
+			}
+		} catch (IOException e) {
+			throw new JAXBException(CALLER + "_unmarshal_cannot_read_payload");
+		}
+		String message = new String(bos.toByteArray()).toLowerCase();
+		/*
+		 * check that each JAXB object field is present no more than twice in payload i.e. in two enclosing tags
+		 */
+		Field [] fields = expectedClass.getDeclaredFields();
+		for (int i = 0; i < fields.length; i++) {
+			if(fields[i].getType().isAssignableFrom(List.class)) continue;
+			int count = StringUtils.countMatches(message, "<" + fields[i].getName().toLowerCase()+">");
+			if (count > 1) throw new JAXBException(CALLER + "_unmarshal_payload_not_valid");
+		}
+		/*
+		 * pass input stream copy for further processing
+		 */
+		InputStream in_copy = new ByteArrayInputStream(bos.toByteArray()); 
+		return unmarshal( context, mediaType, in_copy, expectedClass);
+	}
 	
 	public <T> T unmarshal(JSONJAXBContext context, String mediaType, InputStream in, Class<T> expectedClass) throws JAXBException, SAXException{
 		if((context == null) || (mediaType == null) || ("".equals(mediaType)) || (in == null) || (expectedClass == null)){

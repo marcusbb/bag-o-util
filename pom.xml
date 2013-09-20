@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-
-TODO: sort out the build properties & xml for acl.
-
-TODO: split concerns - logging/acl/config/management
- -->
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -13,10 +9,37 @@ TODO: split concerns - logging/acl/config/management
 	<groupId>ies.common.util</groupId>
 	<artifactId>ies-common</artifactId>
 	<!-- Version TBD -->
-	<version>1.5.2-SNAPSHOT</version>
+	<version>1.5.2</version>
 	<packaging>jar</packaging>
 
-	
+	<licenses>
+	    <license>
+	      <name>The Apache Software License, Version 2.0</name>
+	      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+	      <distribution>repo</distribution>
+	    </license>
+	</licenses>
+	<developers>
+	    <developer>
+	      <id>ivlasov</id>
+	      <name>Iulian Vlasov</name>
+	      <email></email>
+	    </developer>
+	    <developer>
+	      <id>msimonsen</id>
+	      <name>Marcus Simonsen</name>
+	      <email>msimonsen@gmail.com</email>
+	    </developer>
+	    <developer>
+	    	<id>prvdev</id>
+	    	<name>PRV Development Team</name>
+	    	<email></email>
+	    </developer>
+	</developers>
+	<scm>
+	    <url>git@github.com:marcusbb/bag-o-util.git</url>
+	    <connection>https://github.com/marcusbb/bag-o-util.git</connection>
+	  </scm>
 	<!-- PROJECT -->
 	<name>IES COMMON Util</name>
 	<description>The set of common PRV utilities</description>
@@ -112,10 +135,26 @@ TODO: split concerns - logging/acl/config/management
 				<filtering>true</filtering>
 			</resource>
 		</resources>
-
+		
 
 
 		<plugins>
+		
+			<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-source-plugin</artifactId>
+		        <version>2.2.1</version>
+		        <executions>
+		          <execution>
+		            <id>attach-sources</id>
+		            <phase>verify</phase>
+		            <goals>
+		              <goal>jar-no-fork</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+		    </plugin>
+		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -139,22 +178,10 @@ TODO: split concerns - logging/acl/config/management
 
 
 	</build>
-
+	<!-- TBD
 	<distributionManagement>
-	    <repository>
-	      <id>staging</id>
-	      <name>Rim Internal Releases</name>
-	      <url>http://upload-maven.rim.net/nexus/service/local/staging/deploy/maven2</url>
-	    </repository>
-	    <snapshotRepository>
-	      <id>ies-snapshots</id>
-	      <name>Rim Internal Snapshots</name>
-	      <url>http://upload-maven.rim.net/nexus/content/repositories/ies-snapshots</url>
-	    </snapshotRepository>
-	    <site>
-	      <id>site</id>
-	      <name>Rim Internal Site</name>
-	      <url>dav:http://upload-maven.rim.net/nexus/content/sites/rim-dev-site/ies</url>
-	    </site>
-	 </distributionManagement>
+		<repository>TBD</repository>
+	</distributionManagement>
+	 -->
+	
 </project>

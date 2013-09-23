@@ -1,0 +1,8 @@
+/*
+ * (C) 2013 Research In Motion Ltd. All Rights Reserved.
+ * RIM, Research In Motion -- Reg. U.S. Patent and Trademark Office
+ * The RIM Logo and Inter@ctive are trademarks of Research In Motion, Limited
+ * All materials confidential information of Research In Motion, Limited
+ *
+ *
+ */
